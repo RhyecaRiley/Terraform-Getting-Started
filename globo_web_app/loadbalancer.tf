@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "nginx" {
 resource "aws_lb_listener" "nginx" {
   load_balancer_arn = aws_lb.nginx.arn
   port              = "80"
-  protocol          = "HTTPS"
+  protocol          = "HTTP"
 
   default_action {
     type             = "forward"
