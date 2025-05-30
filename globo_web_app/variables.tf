@@ -28,10 +28,10 @@ variable "aws_vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-variable "aws_subnet_cidr_block" {
-  type        = string
-  description = "CIDR range"
-  default     = "10.0.0.0/24"
+variable "aws_public_subnet_cidr_block" {
+  type        = list(string)
+  description = "CIDR block for public subnets in vpc"
+  default     = ["10.0.0.0/24", "10.0.1.0/24"]
 }
 
 variable "enable_dns_hostnames" {
