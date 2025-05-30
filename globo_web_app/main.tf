@@ -24,23 +24,26 @@ data "aws_ssm_parameter" "ami" {
 resource "aws_vpc" "vpc" {
   cidr_block           = var.aws_vpc_cidr_block
   enable_dns_hostnames = var.enable_dns_hostnames
+  tags                 = local.common_tags
 
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
-
+  tags   = local.common_tags
 }
 
 resource "aws_subnet" "subnet1" {
   cidr_block              = var.aws_subnet_cidr_block
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = var.map_public_ip_on_launch
+  tags                    = local.common_tags
 }
 
 # ROUTING #
 resource "aws_route_table" "rtb" {
   vpc_id = aws_vpc.vpc.id
+  tags   = local.common_tags
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -58,6 +61,8 @@ resource "aws_route_table_association" "rta-subnet1" {
 resource "aws_security_group" "nginx-sg" {
   name   = "nginx_sg"
   vpc_id = aws_vpc.vpc.id
+  tags   = local.common_tags
+
 
   # HTTP access from anywhere
   ingress {
@@ -82,6 +87,8 @@ resource "aws_instance" "nginx1" {
   instance_type          = var.aws_instance_type
   subnet_id              = aws_subnet.subnet1.id
   vpc_security_group_ids = [aws_security_group.nginx-sg.id]
+  tags                   = local.common_tags
+
 
   user_data = <<EOF
 #! /bin/bash
