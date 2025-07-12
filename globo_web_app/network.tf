@@ -19,20 +19,14 @@ resource "aws_internet_gateway" "igw" {
   tags   = local.common_tags
 }
 
-resource "aws_subnet" "subnet1" {
-  cidr_block              = var.aws_public_subnet_cidr_block[0]
+resource "aws_subnet" "public_subnet" {
+  cidr_block              = var.aws_public_subnet_cidr_block[count.index]
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = var.map_public_ip_on_launch
-  availability_zone       = data.aws_availability_zones.available.names[0]
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   tags                    = local.common_tags
-}
 
-resource "aws_subnet" "subnet2" {
-  cidr_block              = var.aws_public_subnet_cidr_block[1]
-  vpc_id                  = aws_vpc.vpc.id
-  map_public_ip_on_launch = var.map_public_ip_on_launch
-  availability_zone       = data.aws_availability_zones.available.names[1]
-  tags                    = local.common_tags
+  count = var.vpc_public_subnet_count
 }
 
 # ROUTING #
@@ -46,14 +40,11 @@ resource "aws_route_table" "rtb" {
   }
 }
 
-resource "aws_route_table_association" "rta-subnet1" {
-  subnet_id      = aws_subnet.subnet1.id
+resource "aws_route_table_association" "app_public_subnets" {
+  subnet_id      = aws_subnet.public_subnet[count.index].id
   route_table_id = aws_route_table.rtb.id
-}
 
-resource "aws_route_table_association" "rta-subnet2" {
-  subnet_id      = aws_subnet.subnet2.id
-  route_table_id = aws_route_table.rtb.id
+  count = var.vpc_public_subnet_count
 }
 
 # SECURITY GROUPS #

@@ -10,5 +10,11 @@ locals {
     billing_code = var.billing_code
   }
 
+  name_prefix    = "${var.naming_prefix}-dev"
   s3_bucket_name = "globo-web-app-${random_integer.s3.result}"
+
+  website_content = {
+    website = "/website/index.html"
+    logo    = "/website/Globo_logo_Vert.png"
+  }
 }
