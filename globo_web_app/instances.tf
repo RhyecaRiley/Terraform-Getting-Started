@@ -12,6 +12,7 @@ data "aws_ssm_parameter" "ami" {
 
 # INSTANCES #
 resource "aws_instance" "nginx" {
+  count                  = var.aws_instance_count
   ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
   instance_type          = var.aws_instance_type
   subnet_id              = aws_subnet.public_subnet[count.index].id
@@ -31,8 +32,6 @@ sudo cp /home/ec2-user/Globo_logo_Vert.png /usr/share/nginx/html/Globo_logo_Vert
 EOF
 
   tags = local.common_tags
-
-  count = var.aws_instance_count
 
 }
 
