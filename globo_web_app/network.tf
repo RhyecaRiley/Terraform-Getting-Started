@@ -10,28 +10,28 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "vpc" {
   cidr_block           = var.aws_vpc_cidr_block
   enable_dns_hostnames = var.enable_dns_hostnames
-  tags                 = merge(local.common_tags,{ Name = "${local.name_prefix}-vpc" })
+  tags                 = merge(local.common_tags, { Name = "${local.name_prefix}-vpc" })
 
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
-  tags   = merge(local.common_tags,{ Name = "${local.name_prefix}-igw" })
+  tags   = merge(local.common_tags, { Name = "${local.name_prefix}-igw" })
 }
 
 resource "aws_subnet" "public_subnet" {
-  count = var.vpc_public_subnet_count
+  count                   = var.vpc_public_subnet_count
   cidr_block              = var.aws_public_subnet_cidr_block[count.index]
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = var.map_public_ip_on_launch
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  tags                    = merge(local.common_tags,{ Name = "${local.name_prefix}-public-subnet-${count.index}" })
+  tags                    = merge(local.common_tags, { Name = "${local.name_prefix}-public-subnet-${count.index}" })
 }
 
 # ROUTING #
 resource "aws_route_table" "rtb" {
   vpc_id = aws_vpc.vpc.id
-  tags   = merge(local.common_tags,{ Name = "${local.name_prefix}-rtb" })
+  tags   = merge(local.common_tags, { Name = "${local.name_prefix}-rtb" })
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -50,7 +50,7 @@ resource "aws_route_table_association" "app_public_subnets" {
 resource "aws_security_group" "nginx-sg" {
   name   = "nginx_sg"
   vpc_id = aws_vpc.vpc.id
-  tags   = merge(local.common_tags,{ Name = "${local.name_prefix}-nginx-sg" })
+  tags   = merge(local.common_tags, { Name = "${local.name_prefix}-nginx-sg" })
 
 
   # HTTP access from anywhere
@@ -73,7 +73,7 @@ resource "aws_security_group" "nginx-sg" {
 resource "aws_security_group" "alb_sg" {
   name   = "nginx_alb_sg"
   vpc_id = aws_vpc.vpc.id
-  tags   = merge(local.common_tags,{ Name = "${local.name_prefix}-alb-sg" })
+  tags   = merge(local.common_tags, { Name = "${local.name_prefix}-alb-sg" })
 
 
   # HTTP access from anywhere
